@@ -16,3 +16,5 @@ export * from "./user.js";
 export * from "./addAdmin.js";
 export * from "./getAdmins.js";
 export * from "./getAdmin.js";
+export * from "./logoutUser.js";
+export * from "./refreshToken.js";

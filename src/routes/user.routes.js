@@ -6,7 +6,6 @@ import { roleMiddleware } from "../middleware/roleMiddleware.js";
 import { rateLimit } from "../middleware/rateLimit.js";
 import { validate } from "../middleware/validateMiddleware.js";
 
-// Role constants
 const ROLES = {
   ADMIN: "admin",
   MANAGER: "manager",
@@ -15,24 +14,16 @@ const ROLES = {
 
 const userRoute = new Hono();
 
-/**
- * ======================
- * PUBLIC ROUTES
- * ======================
- */
-
-// User registration
 userRoute.post(
   "/register",
   validate({
     phone: { required: true, pattern: /^[0-9]{9,15}$/ },
     password: { required: true, min: 4, max: 15 },
   }),
-  rateLimit({ windowMs: 60 * 1000, limit: 10 }),
+  rateLimit({ windowMs: 60 * 1000, limit: 50 }),
   UserController.addUser
 );
 
-// User login
 userRoute.post(
   "/login",
   validate({
@@ -43,7 +34,6 @@ userRoute.post(
   UserController.loginUser
 );
 
-// Forgot password
 userRoute.post(
   "/forgot",
   validate({ phone: { required: true, pattern: /^[0-9]{9,15}$/ } }),
@@ -51,7 +41,6 @@ userRoute.post(
   UserController.forgotPassword
 );
 
-// Reset password
 userRoute.post(
   "/reset-password",
   validate({
@@ -62,7 +51,6 @@ userRoute.post(
   UserController.resetPassword
 );
 
-// Resend OTP routes
 userRoute.post(
   "/resend-otp-password",
   validate({ phone: { required: true, pattern: /^[0-9]{9,15}$/ } }),
@@ -77,7 +65,6 @@ userRoute.post(
   UserController.resendOTPActivation
 );
 
-// Verify user phone
 userRoute.post(
   "/verify",
   validate({
@@ -88,13 +75,6 @@ userRoute.post(
   UserController.verifyUser
 );
 
-/**
- * ======================
- * AUTHENTICATED ROUTES
- * ======================
- */
-
-// Get all users (admin/manager)
 userRoute.get(
   "/",
   authMiddleware,
@@ -102,7 +82,6 @@ userRoute.get(
   UserController.getUsers
 );
 
-// Get user by publicId
 userRoute.get(
   "/:publicId",
   authMiddleware,
@@ -110,7 +89,6 @@ userRoute.get(
   UserController.getUser
 );
 
-// User profile
 userRoute.get(
   "/me",
   authMiddleware,
@@ -118,15 +96,19 @@ userRoute.get(
   UserController.authorized
 );
 
-// Refresh token
 userRoute.post(
   "/refresh",
   authMiddleware,
   roleMiddleware([ROLES.ADMIN, ROLES.MANAGER, ROLES.STUDENT]),
   UserController.refreshToken
 );
+userRoute.post(
+  "/logout",
+  authMiddleware,
+  roleMiddleware([ROLES.ADMIN, ROLES.MANAGER, ROLES.STUDENT]),
+  UserController.logoutUser
+);
 
-// Change password
 userRoute.put(
   "/change-password",
   authMiddleware,
@@ -140,7 +122,6 @@ userRoute.put(
   UserController.changePassword
 );
 
-// Change password by manager for any user
 userRoute.put(
   "/change-password/:publicId",
   authMiddleware,
@@ -148,7 +129,6 @@ userRoute.put(
   UserController.updateUser
 );
 
-// User activation (admin/manager)
 userRoute.put(
   "/activation/:id",
   authMiddleware,
@@ -156,7 +136,6 @@ userRoute.put(
   UserController.userActivation
 );
 
-// User status (manager-only)
 userRoute.put(
   "/status/:publicId",
   authMiddleware,
@@ -164,7 +143,6 @@ userRoute.put(
   UserController.userStatus
 );
 
-// Delete user (manager-only)
 userRoute.delete(
   "/delete/:publicId",
   authMiddleware,
@@ -172,13 +150,6 @@ userRoute.delete(
   UserController.deleteUser
 );
 
-/**
- * ======================
- * ADMIN-ONLY ROUTES
- * ======================
- */
-
-// Add admin
 userRoute.post(
   "/admin",
   authMiddleware,
@@ -190,7 +161,6 @@ userRoute.post(
   UserController.addAdmin
 );
 
-// Get all admins
 userRoute.get(
   "/admins/",
   authMiddleware,
@@ -198,19 +168,12 @@ userRoute.get(
   UserController.getAdmins
 );
 
-// Get admin by id
 userRoute.get(
   "/admin/:publicId",
   authMiddleware,
   roleMiddleware([ROLES.MANAGER]),
   UserController.getAdmin
 );
-
-/**
- * ======================
- * PROTECTED ROUTES
- * ======================
- */
 
 userRoute.get("/dashboard/", authMiddleware, verifyPhone, (c) => {
   const user = c.get("user");

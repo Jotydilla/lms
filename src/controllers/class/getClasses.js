@@ -56,6 +56,8 @@ export const getClasses = async (c) => {
         joinDate: formatDate(row.joinDate),
         lastPaymentDate: formatDate(row.lastPaymentDate),
         paidMonth: row.paidMonth,
+        criteriaFile: row.criteriaFile,
+        isApproved: row.isApproved,
         registerDate: formatDate(row.createdAt),
         updateDate: formatDate(row.updatedAt),
       };

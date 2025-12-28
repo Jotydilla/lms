@@ -7,3 +7,4 @@ export * from "./updateClass.js";
 export * from "./updateLastPaymentDate.js";
 export * from "./learningStatus.js";
 export * from "./class.js";
+export * from "./approve.js";

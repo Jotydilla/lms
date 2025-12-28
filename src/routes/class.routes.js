@@ -59,6 +59,14 @@ classRoute.put(
   ClassController.learningStatusClass
 );
 
+// approve criteria
+classRoute.put(
+  "/approve/:publicId",
+  authMiddleware,
+  roleMiddleware([ROLES.ADMIN, ROLES.MANAGER]),
+  ClassController.approveClass
+);
+
 /**
  * ======================
  * STUDENT ROUTES

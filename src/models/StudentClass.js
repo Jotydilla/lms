@@ -39,6 +39,12 @@ const StudentClass = connection.define(
       allowNull: false,
       field: "criteria_file",
     },
+    isApproved: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+      field: "is_approved",
+    },
     joinDate: {
       type: DataTypes.DATEONLY,
       allowNull: false,

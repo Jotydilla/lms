@@ -49,6 +49,8 @@ courseRoute.put(
   CourseController.updateCourse
 );
 
+// approve
+
 /**
  * ======================
  * MANAGER-ONLY ROUTES

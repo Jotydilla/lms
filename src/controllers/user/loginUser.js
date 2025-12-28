@@ -11,7 +11,6 @@ const secret = process.env.SECRET;
 const refreshSecret = process.env.REFRESH_SECRET;
 const MAX_DEVICES = 3;
 
-// Generate a minimal fingerprint for logging
 function generateFingerprint(c) {
   const userAgent = c.req.header("User-Agent") || "";
   const deviceId = c.req.header("X-Device-ID") || "";
@@ -21,7 +20,6 @@ function generateFingerprint(c) {
     .digest("hex");
 }
 
-// --- LOGIN ---
 export const loginUser = async (c) => {
   try {
     let { phone, password } = await c.req.json();
@@ -43,22 +41,19 @@ export const loginUser = async (c) => {
     const match = await bcrypt.compare(password, user.password);
     if (!match) return c.json({ error: "Incorrect password" }, 401);
 
-    // is verified check
     if (!user.is_verified)
       return c.json({ error: "Account not verified" }, 403);
 
-    // is actived check
     if (user.status === "inactive")
-      return c.json({ error: "your account not active contact supporter" });
+      return c.json({ error: "Account inactive" }, 403);
 
     if (user.status === "banned")
-      return c.json({ warning: "banned!!! contact supporter" });
+      return c.json({ error: "Account banned" }, 403);
 
-    // Generate access & refresh tokens
     const accessToken = jwt.sign(
       { id: user.publicId, phone: user.phone },
       secret,
-      { expiresIn: "2d", algorithm: "HS256" }
+      { expiresIn: "1hr", algorithm: "HS256" }
     );
 
     const refreshToken = jwt.sign({ id: user.publicId }, refreshSecret, {
@@ -66,7 +61,6 @@ export const loginUser = async (c) => {
       algorithm: "HS256",
     });
 
-    // Minimal fingerprint and device info
     const fingerprint = generateFingerprint(c);
     const deviceId = c.req.header("X-Device-ID") || "";
     const deviceName = c.req.header("X-Device-Name") || "";
@@ -80,17 +74,14 @@ export const loginUser = async (c) => {
         isRevoked: false,
         expiresAt: { [Op.gt]: now },
       },
-      order: [["last_used_at", "ASC"]], // oldest first
+      order: [["lastUsedAt", "ASC"]],
     });
 
-    // If exceeding MAX_DEVICES, revoke oldest session
     if (activeSessions.length >= MAX_DEVICES) {
-      const oldest = activeSessions[0]; // first is oldest due to ordering
-      oldest.isRevoked = true;
-      await oldest.save();
+      activeSessions[0].isRevoked = true;
+      await activeSessions[0].save();
     }
 
-    // Store current session
     await userSession.create({
       userId: user.publicId,
       refreshToken,
@@ -104,59 +95,18 @@ export const loginUser = async (c) => {
       isRevoked: false,
     });
 
-    return c.json({ accessToken, refreshToken });
+    c.header("Set-Cookie", [
+      `accessToken=${accessToken}; HttpOnly; Path=/; Max-Age=${
+        1 * 60 * 60
+      }; SameSite=Strict`,
+      `refreshToken=${refreshToken}; HttpOnly; Path=/; Max-Age=${
+        30 * 24 * 60 * 60
+      }; SameSite=Strict`,
+    ]);
+
+    return c.json({ message: "Login successful" });
   } catch (err) {
     console.error("LOGIN ERROR:", err);
-    return c.json({ error: "Internal server error" }, 500);
-  }
-};
-
-// --- REFRESH TOKEN ---
-export const refreshToken = async (c) => {
-  try {
-    const token = c.req.header("Authorization")?.split(" ")[1];
-    if (!token) return c.json({ error: "No refresh token" }, 401);
-
-    let payload;
-    try {
-      payload = jwt.verify(token, refreshSecret, { algorithms: ["HS256"] });
-    } catch {
-      return c.json({ error: "Refresh token expired or invalid" }, 401);
-    }
-
-    const now = new Date();
-    const session = await userSession.findOne({
-      where: {
-        userId: payload.id,
-        refreshToken: token,
-        isRevoked: false,
-        expiresAt: { [Op.gt]: now }, // expiredAt > now
-      },
-    });
-
-    if (!session) return c.json({ error: "Session not found or expired" }, 401);
-
-    // Generate new access token
-    const newAccessToken = jwt.sign({ id: session.userId }, secret, {
-      expiresIn: "2d",
-      algorithm: "HS256",
-    });
-    // Rotate refresh token
-    const newRefreshToken = jwt.sign({ id: session.userId }, refreshSecret, {
-      expiresIn: "30d",
-      algorithm: "HS256",
-    });
-    session.refreshToken = newRefreshToken;
-    session.lastUsedAt = new Date();
-    session.expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-    await session.save();
-
-    return c.json({
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken,
-    });
-  } catch (err) {
-    console.error("REFRESH ERROR:", err);
     return c.json({ error: "Internal server error" }, 500);
   }
 };
