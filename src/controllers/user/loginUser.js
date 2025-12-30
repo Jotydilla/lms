@@ -28,7 +28,7 @@ export const loginUser = async (c) => {
     if (!phone || !/^[0-9]{9,15}$/.test(phone)) errors.push("Invalid phone");
     if (!password || password.trim() === "") errors.push("Password required");
     if (errors.length > 0)
-      return c.json({ error: "Validation failed", details: errors }, 400);
+      return c.json({ error: "Validations failed", details: errors }, 400);
 
     password = String(password).trim();
 

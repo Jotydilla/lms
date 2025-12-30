@@ -28,23 +28,19 @@ export const validate = (rules = {}) => {
     for (const field in rules) {
       const rule = rules[field];
 
-      // required check
       if (rule.required && !body[field]) {
         errors.push(`${field} is required`);
         continue;
       }
 
-      // type check
       if (rule.type && body[field] && typeof body[field] !== rule.type) {
         errors.push(`${field} must be a ${rule.type}`);
       }
 
-      // pattern check (regex)
       if (rule.pattern && body[field] && !rule.pattern.test(body[field])) {
         errors.push(`${field} is invalid`);
       }
 
-      // min/max length
       if (rule.min && body[field] && body[field].length < rule.min) {
         errors.push(`${field} must be at least ${rule.min} characters`);
       }

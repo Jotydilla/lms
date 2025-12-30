@@ -2,7 +2,9 @@ import PaymentMethod from "../../models/PaymentMethod.js";
 
 export const getPaymentMethods = async (c) => {
   try {
-    const paymentMethod = await PaymentMethod.findAll();
+    const paymentMethod = await PaymentMethod.findAll({
+      where: { accountStatus: 0 },
+    });
     if (!paymentMethod || paymentMethod.length === 0) {
       return c.json({ message: "payment not found!!" });
     }

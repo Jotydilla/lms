@@ -18,7 +18,7 @@ userRoute.post(
   "/register",
   validate({
     phone: { required: true, pattern: /^[0-9]{9,15}$/ },
-    password: { required: true, min: 4, max: 15 },
+    password: { required: true, min: 2, max: 15 },
   }),
   rateLimit({ windowMs: 60 * 1000, limit: 50 }),
   UserController.addUser

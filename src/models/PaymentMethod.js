@@ -27,6 +27,11 @@ const PaymentMethod = connection.define(
       unique: true,
       field: "account_number",
     },
+    accountCode: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: "account_code",
+    },
     accountStatus: {
       type: DataTypes.TINYINT,
       allowNull: false,
