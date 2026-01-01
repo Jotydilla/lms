@@ -5,6 +5,7 @@ import { Op } from "sequelize";
 import User from "../../models/User.js";
 import userSession from "../../models/userSession.js";
 import crypto from "crypto";
+// updated!!
 
 dotenv.config();
 const secret = process.env.SECRET;
@@ -95,13 +96,18 @@ export const loginUser = async (c) => {
       isRevoked: false,
     });
 
+    // c.header("Set-Cookie", [
+    //   `accessToken=${accessToken}; HttpOnly; Path=/; Max-Age=${3600}; SameSite=None; Secure`,
+    //   `refreshToken=${refreshToken}; HttpOnly; Path=/; Max-Age=${
+    //     30 * 24 * 60 * 60
+    //   }; SameSite=None`,
+    // ]);
+
     c.header("Set-Cookie", [
-      `accessToken=${accessToken}; HttpOnly; Path=/; Max-Age=${
-        1 * 60 * 60
-      }; SameSite=Strict`,
+      `accessToken=${accessToken}; HttpOnly; Path=/; Max-Age=3600; SameSite=Lax`,
       `refreshToken=${refreshToken}; HttpOnly; Path=/; Max-Age=${
         30 * 24 * 60 * 60
-      }; SameSite=Strict`,
+      }; SameSite=Lax`,
     ]);
 
     return c.json({ message: "Login successful" });

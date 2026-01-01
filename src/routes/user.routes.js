@@ -30,7 +30,7 @@ userRoute.post(
     phone: { required: true, pattern: /^[0-9]{9,15}$/ },
     password: { required: true, min: 3, max: 30 },
   }),
-  rateLimit({ windowMs: 60 * 1000, limit: 5 }),
+  rateLimit({ windowMs: 60 * 1000, limit: 15 }),
   UserController.loginUser
 );
 
