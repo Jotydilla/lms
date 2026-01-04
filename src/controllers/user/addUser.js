@@ -43,11 +43,13 @@ export const addUser = async (c) => {
       verificationCode: code,
       verificationExpires: expires,
     });
+    const user = await User.findOne({ where: { phone } });
     return c.json(
       {
         message: "register successfully!!",
+        id: user.publicId,
       },
-      201
+      200
     );
   } catch (err) {
     console.log("error", err);

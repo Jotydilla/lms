@@ -19,14 +19,16 @@ export const resendOTPPassword = async (c) => {
 
   if (!user) return c.json({ error: "User not found" }, 404);
 
-  // OTP expired
   if (new Date() > user.verificationExpires) {
     const { reCode, expires } = generateVerification();
     await user.update({
       verificationCode: reCode,
       verificationExpires: expires,
     });
-    return c.json({ error: "New OTP sent." }, 400);
+    return c.json({ message: "New OTP sent." }, 200);
   }
-  return c.json({ msg: "wait verfication code was sendind for you!!" });
+  return c.json(
+    { message: "wait verfication code was sendind for you!!" },
+    500
+  );
 };

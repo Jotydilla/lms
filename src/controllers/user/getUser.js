@@ -3,7 +3,7 @@ export const getUser = async (c) => {
   try {
     const publicId = c.req.param("publicId");
     const user_data = await User.findOne({
-      where: { publicId, userType: "student" },
+      where: { publicId },
       attributes: [
         "public_id",
         "phone",
@@ -16,7 +16,7 @@ export const getUser = async (c) => {
       ],
     });
     if (!user_data) {
-      return c.json({ message: "User not found!!" }, 404);
+      return c.json({ message: "User not found!!" }, 500);
     }
     const row = user_data.toJSON();
     const formatDate = (date) => new Date(date).toISOString().slice(0, 10);
@@ -31,7 +31,7 @@ export const getUser = async (c) => {
       updateDate: formatDate(row.updatedAt),
     };
 
-    return c.json({ user: flat });
+    return c.json({ data: flat }, 200);
   } catch (error) {
     console.error(error);
     return c.text("Internal server error", 500);

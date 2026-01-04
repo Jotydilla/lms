@@ -37,10 +37,19 @@ export const loginUser = async (c) => {
       return c.json({ error: "Server config error" }, 500);
 
     const user = await User.findOne({ where: { phone } });
-    if (!user) return c.json({ error: "User not found" }, 404);
+    if (!user)
+      return c.json(
+        { error: "You have entered incorrect phone number or password." },
+        404
+      );
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match) return c.json({ error: "Incorrect password" }, 401);
+    if (!match)
+      return c.json(
+        { error: "You have entered incorrect phone number or password." },
+        401
+      );
+    // if (!match) return c.json({ error: "Incorrect password" }, 401);
 
     if (!user.is_verified)
       return c.json({ error: "Account not verified" }, 403);

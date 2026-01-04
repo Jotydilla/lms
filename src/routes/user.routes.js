@@ -37,7 +37,7 @@ userRoute.post(
 userRoute.post(
   "/forgot",
   validate({ phone: { required: true, pattern: /^[0-9]{9,15}$/ } }),
-  rateLimit({ windowMs: 2 * 60 * 1000, limit: 10 }),
+  rateLimit({ windowMs: 10 * 60 * 1000, limit: 10 }),
   UserController.forgotPassword
 );
 
@@ -84,10 +84,12 @@ userRoute.get(
 
 userRoute.get(
   "/:publicId",
-  authMiddleware,
-  roleMiddleware([ROLES.ADMIN, ROLES.MANAGER]),
+  // authMiddleware,
+  // roleMiddleware([ROLES.ADMIN, ROLES.MANAGER, ROLES.STUDENT]),
   UserController.getUser
 );
+
+userRoute.post("/otp-verify/:publicId", UserController.verifyOTP);
 
 userRoute.get(
   "/me",

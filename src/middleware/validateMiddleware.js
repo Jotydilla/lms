@@ -51,7 +51,11 @@ export const validate = (rules = {}) => {
     }
 
     if (errors.length > 0) {
-      return c.json({ error: "Validation failed", details: errors }, 400);
+      return c.json(
+        { error: "You have entered fields not accebtable", details: errors },
+        400
+      );
+      // return c.json({ error: "Validation failed", details: errors }, 400);
     }
 
     await next();

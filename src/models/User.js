@@ -49,6 +49,11 @@ const User = connection.define(
       allowNull: true,
       field: "verification_expires",
     },
+    lastChangePassword: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      field: "last_change_password",
+    },
   },
   {
     tableName: "users",

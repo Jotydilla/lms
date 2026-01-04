@@ -3,14 +3,14 @@ import bcrypt from "bcrypt";
 
 const generateVerification = () => {
   const reCode = Math.floor(100000 + Math.random() * 900000).toString();
-  const expires = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
+  const expires = new Date(Date.now() + 10 * 60 * 1000);
   return { reCode, expires };
 };
 export const resetPassword = async (c) => {
   try {
     const body = await c.req.json();
 
-    let { phone, code, password } = body;
+    let { code } = body;
     if (!password) {
       return c.json({ message: "All fields are required" }, 400);
     }
