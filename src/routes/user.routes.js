@@ -62,11 +62,7 @@ userRoute.post(
 );
 
 userRoute.post(
-  "/verify",
-  validate({
-    phone: { required: true, pattern: /^[0-9]{9,15}$/ },
-    code: { required: true, pattern: /^[0-9]{6}$/, min: 6, max: 6 },
-  }),
+  "/verify/:publicId",
   rateLimit({ windowMs: 60 * 60 * 1000, limit: 5 }),
   UserController.verifyUser
 );

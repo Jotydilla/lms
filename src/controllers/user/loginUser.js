@@ -43,22 +43,21 @@ export const loginUser = async (c) => {
         404
       );
 
+    if (!user.is_verified)
+      return c.json({ error: "This account not verified" }, 403);
+
     const match = await bcrypt.compare(password, user.password);
     if (!match)
       return c.json(
         { error: "You have entered incorrect phone number or password." },
         401
       );
-    // if (!match) return c.json({ error: "Incorrect password" }, 401);
-
-    if (!user.is_verified)
-      return c.json({ error: "Account not verified" }, 403);
 
     if (user.status === "inactive")
       return c.json({ error: "your account not active!!" }, 403);
 
     if (user.status === "banned")
-      return c.json({ error: "Account banned" }, 403);
+      return c.json({ error: "Your account was banned" }, 403);
 
     const accessToken = jwt.sign(
       { id: user.publicId, phone: user.phone },
@@ -123,7 +122,7 @@ export const loginUser = async (c) => {
       }; SameSite=Lax`,
     ]);
 
-    return c.json({ message: "Login successful" });
+    return c.json({ message: "Login successful", id: user.publicId }, 200);
   } catch (err) {
     console.error("LOGIN ERROR:", err);
     return c.json({ error: "Internal server error" }, 500);
