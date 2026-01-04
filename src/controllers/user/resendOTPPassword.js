@@ -19,6 +19,35 @@ export const resendOTPPassword = async (c) => {
 
   if (!user) return c.json({ error: "User not found" }, 404);
 
+  const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+  if (user.lastChangePassword) {
+    const lastChangeMs = new Date(user.lastChangePassword).getTime();
+    const sinceLastChange = Date.now() - lastChangeMs;
+    if (sinceLastChange < THREE_DAYS_MS) {
+      const remainingMs = THREE_DAYS_MS - sinceLastChange;
+      const remainingDays = Math.floor(remainingMs / (24 * 60 * 60 * 1000));
+      const remainingHours = Math.ceil(
+        (remainingMs % (24 * 60 * 60 * 1000)) / (1000 * 60 * 60)
+      );
+      const dayLabel = remainingDays === 1 ? "day" : "days";
+      const hourLabel = remainingHours === 1 ? "hour" : "hours";
+      const timeMsg =
+        remainingDays > 0
+          ? `${remainingDays} ${dayLabel}${
+              remainingHours > 0 ? ` and ${remainingHours} ${hourLabel}` : ""
+            }`
+          : `${remainingHours} ${hourLabel}`;
+
+      return c.json(
+        {
+          // error: "Password recently changed",
+          message: `You can change your password once every 3 days. Try again in ~ ${timeMsg}.`,
+        },
+        403
+      );
+    }
+  }
+
   if (new Date() > user.verificationExpires) {
     const { reCode, expires } = generateVerification();
     await user.update({

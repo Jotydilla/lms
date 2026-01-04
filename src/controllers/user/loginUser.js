@@ -55,7 +55,7 @@ export const loginUser = async (c) => {
       return c.json({ error: "Account not verified" }, 403);
 
     if (user.status === "inactive")
-      return c.json({ error: "Account inactive" }, 403);
+      return c.json({ error: "your account not active!!" }, 403);
 
     if (user.status === "banned")
       return c.json({ error: "Account banned" }, 403);
@@ -69,6 +69,10 @@ export const loginUser = async (c) => {
     const refreshToken = jwt.sign({ id: user.publicId }, refreshSecret, {
       expiresIn: "30d",
       algorithm: "HS256",
+    });
+
+    await user.update({
+      lastLogin: new Date(),
     });
 
     const fingerprint = generateFingerprint(c);

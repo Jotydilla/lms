@@ -25,11 +25,23 @@ export const forgotPassword = async (c) => {
     const sinceLastChange = Date.now() - lastChangeMs;
     if (sinceLastChange < THREE_DAYS_MS) {
       const remainingMs = THREE_DAYS_MS - sinceLastChange;
-      const remainingHours = Math.ceil(remainingMs / (1000 * 60 * 60));
+      const remainingDays = Math.floor(remainingMs / (24 * 60 * 60 * 1000));
+      const remainingHours = Math.ceil(
+        (remainingMs % (24 * 60 * 60 * 1000)) / (1000 * 60 * 60)
+      );
+      const dayLabel = remainingDays === 1 ? "day" : "days";
+      const hourLabel = remainingHours === 1 ? "hour" : "hours";
+      const timeMsg =
+        remainingDays > 0
+          ? `${remainingDays} ${dayLabel}${
+              remainingHours > 0 ? ` and ${remainingHours} ${hourLabel}` : ""
+            }`
+          : `${remainingHours} ${hourLabel}`;
+
       return c.json(
         {
           // error: "Password recently changed",
-          message: `You can change your password once every 3 days. Try again in ~  ${remainingHours} hour(s).`,
+          message: `You can change your password once every 3 days. Try again in ~ ${timeMsg}.`,
         },
         403
       );

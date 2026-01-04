@@ -9,8 +9,9 @@ const generateVerification = () => {
 export const resetPassword = async (c) => {
   try {
     const body = await c.req.json();
+    const publicId = c.req.param("publicId");
 
-    let { code } = body;
+    let { password } = body;
     if (!password) {
       return c.json({ message: "All fields are required" }, 400);
     }
@@ -19,44 +20,30 @@ export const resetPassword = async (c) => {
     }
     password = String(password).trim();
 
-    const errors = [];
-    if (!phone || !/^[0-9]{9,15}$/.test(phone))
-      errors.push("Invalid phone number");
-    if (!code || !/^[0-9]{6}$/.test(code))
-      errors.push("Invalid Verification code");
-
-    if (errors.length > 0)
-      return c.json({ error: "Validation failed", details: errors }, 400);
-
-    const user = await User.findOne({ where: { phone } });
+    const user = await User.findOne({ where: { publicId } });
 
     if (!user) return c.json({ error: "User not found" }, 404);
 
-    if (!user.is_verified) return c.json({ message: "user not verified" });
-    // Wrong code
-    if (user.verificationCode !== code) {
-      return c.json({ error: "OTP invalid" }, 400);
-    }
-    // OTP expired
-    if (new Date() > user.verificationExpires) {
-      const { reCode, expires } = generateVerification();
-      await user.update({
-        verificationCode: reCode,
-        verificationExpires: expires,
-      });
-      return c.json({ error: "OTP expired. New OTP sent." }, 400);
+    if (!user.is_verified) return c.json({ message: "user not verified" }, 403);
+
+    if (
+      user.verificationExpires &&
+      Date.now() > new Date(user.verificationExpires).getTime()
+    ) {
+      return c.json({ error: "OTP expired. resent new OTP." }, 400);
     }
     const hashed = await bcrypt.hash(password, 10);
 
-    // OTP is correct
     await user.update({
       password: hashed,
       is_verified: true,
       verificationCode: null,
       verificationExpires: null,
+      lastChangePassword: new Date(),
     });
-    return c.json({ message: "password reset. You can now log in." });
+    return c.json({ message: "password reset. You can now log in." }, 200);
   } catch (error) {
-    return c.json({ msg: "Internal server Error " });
+    console.error(error);
+    return c.json({ error: "Internal server Error " }, 500);
   }
 };

@@ -20,7 +20,7 @@ userRoute.post(
     phone: { required: true, pattern: /^[0-9]{9,15}$/ },
     password: { required: true, min: 2, max: 15 },
   }),
-  rateLimit({ windowMs: 60 * 1000, limit: 50 }),
+  rateLimit({ windowMs: 60 * 60 * 1000, limit: 5 }),
   UserController.addUser
 );
 
@@ -30,38 +30,34 @@ userRoute.post(
     phone: { required: true, pattern: /^[0-9]{9,15}$/ },
     password: { required: true, min: 3, max: 30 },
   }),
-  rateLimit({ windowMs: 60 * 1000, limit: 15 }),
+  rateLimit({ windowMs: 60 * 60 * 1000, limit: 10 }),
   UserController.loginUser
 );
 
 userRoute.post(
   "/forgot",
   validate({ phone: { required: true, pattern: /^[0-9]{9,15}$/ } }),
-  rateLimit({ windowMs: 10 * 60 * 1000, limit: 10 }),
+  rateLimit({ windowMs: 60 * 60 * 1000, limit: 6 }),
   UserController.forgotPassword
 );
 
-userRoute.post(
-  "/reset-password",
-  validate({
-    phone: { required: true, pattern: /^[0-9]{9,15}$/ },
-    code: { required: true, pattern: /^[0-9]{6}$/, min: 6, max: 6 },
-  }),
-  rateLimit({ windowMs: 10 * 60 * 1000, limit: 10 }),
+userRoute.put(
+  "/reset-password/:publicId",
+  rateLimit({ windowMs: 60 * 60 * 1000, limit: 3 }),
   UserController.resetPassword
 );
 
 userRoute.post(
   "/resend-otp-password",
   validate({ phone: { required: true, pattern: /^[0-9]{9,15}$/ } }),
-  rateLimit({ windowMs: 10 * 60 * 1000, limit: 10 }),
+  rateLimit({ windowMs: 60 * 60 * 1000, limit: 10 }),
   UserController.resendOTPPassword
 );
 
 userRoute.post(
   "/resend-otp-activation",
   validate({ phone: { required: true, pattern: /^[0-9]{9,15}$/ } }),
-  rateLimit({ windowMs: 10 * 60 * 1000, limit: 10 }),
+  rateLimit({ windowMs: 60 * 60 * 1000, limit: 10 }),
   UserController.resendOTPActivation
 );
 
@@ -71,7 +67,7 @@ userRoute.post(
     phone: { required: true, pattern: /^[0-9]{9,15}$/ },
     code: { required: true, pattern: /^[0-9]{6}$/, min: 6, max: 6 },
   }),
-  rateLimit({ windowMs: 5 * 60 * 1000, limit: 10 }),
+  rateLimit({ windowMs: 60 * 60 * 1000, limit: 5 }),
   UserController.verifyUser
 );
 

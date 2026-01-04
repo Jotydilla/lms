@@ -42,6 +42,7 @@ export const addUser = async (c) => {
       password: hashed,
       verificationCode: code,
       verificationExpires: expires,
+      lastChangePassword: new Date(),
     });
     const user = await User.findOne({ where: { phone } });
     return c.json(
