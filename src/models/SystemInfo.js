@@ -22,6 +22,12 @@ const SystemInfo = connection.define(
       allowNull: false,
       field: "system_email",
     },
+    Address: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: true,
+      field: "address",
+    },
   },
   {
     tableName: "system_information",

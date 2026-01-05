@@ -4,7 +4,6 @@ import { authMiddleware } from "../middleware/authMiddleware.js";
 import { roleMiddleware } from "../middleware/roleMiddleware.js";
 import { validate } from "../middleware/validateMiddleware.js";
 
-// Role constants
 const ROLES = {
   ADMIN: "admin",
   MANAGER: "manager",
@@ -12,25 +11,10 @@ const ROLES = {
 
 const systemRoute = new Hono();
 
-/**
- * ======================
- * PUBLIC ROUTES
- * ======================
- */
-
-// Get all system info
 systemRoute.get("/", systeminfoController.getSystemsinfo);
 
-// Get system info by id
 systemRoute.get("/:id", systeminfoController.getSysteminfo);
 
-/**
- * ======================
- * ADMIN / MANAGER ROUTES
- * ======================
- */
-
-// Add new system info
 systemRoute.post(
   "/add",
   authMiddleware,
@@ -42,7 +26,6 @@ systemRoute.post(
   systeminfoController.addSysteminfo
 );
 
-// Update system info
 systemRoute.put(
   "/update/:id",
   authMiddleware,
@@ -54,13 +37,6 @@ systemRoute.put(
   systeminfoController.updateSysteminfo
 );
 
-/**
- * ======================
- * MANAGER-ONLY ROUTES
- * ======================
- */
-
-// Delete system info
 systemRoute.delete(
   "/delete/:id",
   authMiddleware,
