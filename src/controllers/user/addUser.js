@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import User from "../../models/User.js";
+import VerificationSession from "../../models/VerificationSession.js";
 
 const generateVerification = () => {
   const code = Math.floor(100000 + Math.random() * 900000).toString();
@@ -19,7 +20,6 @@ export const addUser = async (c) => {
     if (!phone || !password) {
       return c.json({ error: "Phone and password are required" }, 400);
     }
-    const { code, expires } = generateVerification();
 
     const errors = [];
     if (!phone || !/^[0-9]{9,15}$/.test(phone)) errors.push("Invalid phone");
@@ -36,19 +36,29 @@ export const addUser = async (c) => {
     if (existingUser) {
       return c.json({ error: "User already exists" }, 409);
     }
+
+    const { code, expires } = generateVerification();
+
     const hashed = await bcrypt.hash(password, 10);
-    await User.create({
+    const user = await User.create({
       phone,
       password: hashed,
-      verificationCode: code,
-      verificationExpires: expires,
       lastChangePassword: new Date(),
     });
-    const user = await User.findOne({ where: { phone } });
+
+    const verification = await VerificationSession.create({
+      userId: user.userId,
+      purpose: "phone_verify",
+      otpHash: code,
+      expiresAt: expires,
+    });
+
+    // await sendSms(user.phone, otp);
+
     return c.json(
       {
         message: "register successfully!!",
-        id: user.publicId,
+        id: verification.verifyId,
       },
       200
     );

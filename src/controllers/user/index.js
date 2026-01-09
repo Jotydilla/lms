@@ -19,3 +19,5 @@ export * from "./getAdmin.js";
 export * from "./logoutUser.js";
 export * from "./refreshToken.js";
 export * from "./verifyOTP.js";
+export * from "./getVerificationSession.js";
+export * from "./getResetPassword.js";

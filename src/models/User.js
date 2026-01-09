@@ -39,16 +39,6 @@ const User = connection.define(
       defaultValue: DataTypes.NOW,
       field: "last_login",
     },
-    verificationCode: {
-      type: DataTypes.STRING(10),
-      allowNull: true,
-      field: "verification_code",
-    },
-    verificationExpires: {
-      type: DataTypes.DATE(6),
-      allowNull: true,
-      field: "verification_expires",
-    },
     lastChangePassword: {
       type: DataTypes.DATE,
       allowNull: false,

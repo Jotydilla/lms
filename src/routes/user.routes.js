@@ -37,13 +37,13 @@ userRoute.post(
 userRoute.post(
   "/forgot",
   validate({ phone: { required: true, pattern: /^[0-9]{9,15}$/ } }),
-  rateLimit({ windowMs: 60 * 60 * 1000, limit: 6 }),
+  rateLimit({ windowMs: 60 * 60 * 1000, limit: 3 }),
   UserController.forgotPassword
 );
 
 userRoute.put(
-  "/reset-password/:publicId",
-  rateLimit({ windowMs: 60 * 60 * 1000, limit: 3 }),
+  "/reset-password/:verifyId",
+  rateLimit({ windowMs: 60 * 60 * 1000, limit: 10 }),
   UserController.resetPassword
 );
 
@@ -62,9 +62,19 @@ userRoute.post(
 );
 
 userRoute.post(
-  "/verify/:publicId",
-  rateLimit({ windowMs: 60 * 60 * 1000, limit: 5 }),
+  "/verify/:verifyId",
+  rateLimit({ windowMs: 60 * 60 * 1000, limit: 20 }),
   UserController.verifyUser
+);
+
+userRoute.get(
+  "/verification-otp/:verifyId",
+  UserController.getVerificationSession
+);
+
+userRoute.get(
+  "/get-reset-password-otp/:verifyId",
+  UserController.getResetPassword
 );
 
 userRoute.get(
@@ -81,7 +91,7 @@ userRoute.get(
   UserController.getUser
 );
 
-userRoute.post("/otp-verify/:publicId", UserController.verifyOTP);
+userRoute.post("/otp-verify/:verifyId", UserController.verifyOTP);
 
 userRoute.get(
   "/me",
