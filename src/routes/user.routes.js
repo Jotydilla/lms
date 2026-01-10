@@ -41,6 +41,13 @@ userRoute.post(
   UserController.forgotPassword
 );
 
+userRoute.post(
+  "/verify-phone",
+  validate({ phone: { required: true, pattern: /^[0-9]{9,15}$/ } }),
+  rateLimit({ windowMs: 60 * 60 * 1000, limit: 5 }),
+  UserController.verifyPhone
+);
+
 userRoute.put(
   "/reset-password/:verifyId",
   rateLimit({ windowMs: 60 * 60 * 1000, limit: 10 }),

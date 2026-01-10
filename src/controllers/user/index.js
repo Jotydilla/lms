@@ -21,3 +21,4 @@ export * from "./refreshToken.js";
 export * from "./verifyOTP.js";
 export * from "./getVerificationSession.js";
 export * from "./getResetPassword.js";
+export * from "./verifyPhone.js";

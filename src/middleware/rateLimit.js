@@ -1,8 +1,8 @@
 const rateStore = new Map();
 
 export const rateLimit = (options = {}) => {
-  const windowMs = options.windowMs || 60 * 1000; // 1 minute
-  const limit = options.limit || 10; // default 10 requests per minute
+  const windowMs = options.windowMs || 60 * 1000;
+  const limit = options.limit || 10;
 
   return async (c, next) => {
     const ip =
@@ -12,7 +12,6 @@ export const rateLimit = (options = {}) => {
     const now = Date.now();
     const entry = rateStore.get(ip) || { count: 0, last: now };
 
-    // Reset window
     if (now - entry.last > windowMs) {
       entry.count = 0;
       entry.last = now;

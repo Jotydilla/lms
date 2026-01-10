@@ -44,7 +44,15 @@ export const loginUser = async (c) => {
       );
 
     if (!user.is_verified)
-      return c.json({ error: "This account not verified" }, 403);
+      return c.json(
+        {
+          data: {
+            message: "Account not verified",
+            verified: user.is_verified,
+          },
+        },
+        403
+      );
 
     const match = await bcrypt.compare(password, user.password);
     if (!match)
@@ -122,7 +130,10 @@ export const loginUser = async (c) => {
       }; SameSite=Lax`,
     ]);
 
-    return c.json({ message: "Login successful", id: user.publicId }, 200);
+    return c.json(
+      { data: { message: "Login successful", id: user.is_verified } },
+      200
+    );
   } catch (err) {
     console.error("LOGIN ERROR:", err);
     return c.json({ error: "Internal server error" }, 500);
