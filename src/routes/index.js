@@ -17,6 +17,7 @@ import studentExamAnswerRoute from "./studentexamanswer.js";
 import commentRoute from "./courseComment.route.js";
 import courseVideoRoute from "./courseVideo.route.js";
 import instructorRoute from "./instructors.route.js";
+import publicCourseRoute from "./publicCourse.route.js";
 
 const routes = new Hono();
 
@@ -36,6 +37,7 @@ routes.route("/exam-questions", examQuestionRoute);
 routes.route("/exam-answers", studentExamAnswerRoute);
 routes.route("/comments", commentRoute);
 routes.route("/instructors", instructorRoute);
+routes.route("/pubic-courses", publicCourseRoute);
 
 routes.route("/dashboard", authRouter);
 

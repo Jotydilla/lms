@@ -1,34 +1,22 @@
-import Course from "../../models/Course.js";
-import Exam from "../../models/Exam.js";
 import path from "path";
 import { promises as fs } from "fs";
+import PublicCourse from "../../models/PublicCourse.js";
 
-export const deleteCourse = async (c) => {
+export const deletePublicCourse = async (c) => {
   try {
     const publicId = c.req.param("publicId");
 
-    const course = await Course.findOne({ where: { publicId } });
-    if (!course) {
+    const publicCourse = await PublicCourse.findOne({ where: { publicId } });
+    if (!publicCourse) {
       return c.json({ message: "Course not found!" }, 404);
     }
 
-    const exam = await Exam.findOne({ where: { courseId: course.courseId } });
-    if (exam) {
-      return c.json(
-        {
-          message:
-            "Cannot delete this course because it has related exam records.",
-        },
-        400
-      );
-    }
-
-    if (course.thumbnail) {
+    if (publicCourse.thumbnail) {
       const thumbPath = path.join(
         process.cwd(),
         "src/courses",
         "course_thumbnail",
-        course.thumbnail
+        publicCourse.thumbnail
       );
       try {
         await fs.unlink(thumbPath);
@@ -36,9 +24,7 @@ export const deleteCourse = async (c) => {
         console.warn("Thumbnail file not found, skipping delete.");
       }
     }
-
-    await course.destroy();
-
+    await publicCourse.destroy();
     return c.json({ message: "Course deleted successfully!" }, 200);
   } catch (error) {
     console.error("delete course error:", error);

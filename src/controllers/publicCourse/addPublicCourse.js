@@ -1,40 +1,34 @@
-import Course from "../../models/Course.js";
-import Level from "../../models/Level.js";
+import PublicCourse from "../../models/PublicCourse.js";
 import path from "path";
 import crypto from "crypto";
 import { promises as fs } from "fs";
 
-export const addCourse = async (c) => {
+export const addPublicCourse = async (c) => {
   try {
     const body = await c.req.parseBody();
-    const { levelId, courseTitle, description, courseOrder } = body;
+    const { courseTitle, description, instructorName, creditHr } = body;
     const thumbnail = body.thumbnail;
-
     if (
-      !levelId ||
       !courseTitle ||
       !description ||
-      courseOrder === undefined ||
-      courseOrder === null ||
+      !instructorName ||
+      !creditHr ||
       !thumbnail
-    ) {
-      return c.json({ message: "All fields are required" }, 400);
-    }
+    )
+      return c.json({ message: "All fields are required!!" });
 
-    const level = await Level.findByPk(levelId);
-    if (!level) return c.json({ message: "Level not found!" }, 404);
-
-    const existingCourse = await Course.findOne({
-      where: { levelId, courseTitle },
+    const existingPublicCourse = await PublicCourse.findOne({
+      where: { courseTitle },
     });
-    if (existingCourse) {
-      return c.json(
-        { message: "This course already exists for this level!" },
-        409
-      );
-    }
+    if (existingPublicCourse)
+      return c.json({ message: "course already exist" }, 409);
 
-    const allowedMime = ["image/jpeg", "image/png", "image/jpg"];
+    const allowedMime = [
+      //   "application/pdf",
+      "image/jpeg",
+      "image/png",
+      "image/jpg",
+    ];
     if (!allowedMime.includes(thumbnail.type)) {
       return c.json({ error: "Only JPG, JPEG, PNG files are allowed" }, 400);
     }
@@ -55,11 +49,11 @@ export const addCourse = async (c) => {
     const buffer = Buffer.from(await thumbnail.arrayBuffer());
     await fs.writeFile(path.join(uploadDir, fileName), buffer);
 
-    const newCourse = await Course.create({
-      levelId,
+    const newPublicCourse = await PublicCourse.create({
       courseTitle,
       description,
-      courseOrder,
+      instructorName,
+      creditHr,
       thumbnail: fileName,
     });
 
@@ -67,18 +61,18 @@ export const addCourse = async (c) => {
       {
         message: "Course added successfully!",
         data: {
-          id: newCourse.publicId,
-          levelId: newCourse.levelId,
-          courseTitle: newCourse.courseTitle,
-          description: newCourse.description,
-          courseOrder: newCourse.courseOrder,
-          thumbnail: newCourse.thumbnail,
+          id: newPublicCourse.publicId,
+          courseTitle: newPublicCourse.courseTitle,
+          description: newPublicCourse.description,
+          instructorName: newPublicCourse.instructorName,
+          creditHr: newPublicCourse.creditHr,
+          thumbnail: newPublicCourse.thumbnail,
         },
       },
       200
     );
   } catch (error) {
-    console.error("Add course error:", error);
+    console.error("Add public course error: ", error);
     return c.json({ error: "Internal Server Error" }, 500);
   }
 };

@@ -1,43 +1,31 @@
-import Course from "../../models/Course.js";
+import PublicCourse from "../../models/PublicCourse.js";
 import path from "path";
 import crypto from "crypto";
 import { promises as fs } from "fs";
-import { Op } from "sequelize";
 
-export const updateCourse = async (c) => {
+export const updatePublicCourse = async (c) => {
   try {
     const publicId = c.req.param("publicId");
     const body = await c.req.parseBody();
-    const { courseTitle, description, courseOrder } = body;
+    const { courseTitle, description, instructorName, creditHr } = body;
     const thumbnail = body.thumbnail;
-
     if (
       !courseTitle ||
       !description ||
-      courseOrder === undefined ||
-      courseOrder === null
-    ) {
-      return c.json(
-        { message: "courseTitle, description, and courseOrder are required" },
-        400
-      );
-    }
+      !instructorName ||
+      !creditHr ||
+      !thumbnail
+    )
+      return c.json({ message: "All fields are required!!" });
 
-    const course = await Course.findOne({ where: { publicId } });
-    if (!course) return c.json({ error: "Course not found!" }, 404);
+    const publicCourse = await PublicCourse.findOne({ where: { publicId } });
+    if (!publicCourse) return c.json({ error: "Course not found!" }, 404);
 
-    const existingTitle = await Course.findOne({
-      where: {
-        courseTitle,
-        publicId: { [Op.ne]: publicId },
-      },
+    const existingPublicCourse = await PublicCourse.findOne({
+      where: { courseTitle },
     });
-    if (existingTitle) {
-      return c.json(
-        { message: "Course title already exists, try another" },
-        400
-      );
-    }
+    if (existingPublicCourse)
+      return c.json({ message: "course already exist" }, 409);
 
     let fileName = course.thumbnail;
     if (thumbnail && thumbnail.name) {
@@ -68,36 +56,39 @@ export const updateCourse = async (c) => {
       const buffer = Buffer.from(await thumbnail.arrayBuffer());
       await fs.writeFile(path.join(uploadDir, fileName), buffer);
 
-      if (course.thumbnail) {
-        const oldPath = path.join(uploadDir, course.thumbnail);
+      if (publicCourse.thumbnail) {
+        const oldPath = path.join(uploadDir, publicCourse.thumbnail);
         fs.unlink(oldPath).catch(() =>
           console.warn("Old thumbnail not found, skipping delete")
         );
       }
     }
 
-    await course.update({
+    await publicCourse.update({
       courseTitle,
       description,
-      courseOrder,
+      instructorName,
+      creditHr,
       thumbnail: fileName,
     });
 
     return c.json(
       {
         success: true,
-        message: "Course updated successfully",
+        message: "Course updated successfully!",
         data: {
-          courseTitle: course.courseTitle,
-          description: course.description,
-          courseOrder: course.courseOrder,
-          thumbnail: course.thumbnail,
+          id: publicCourse.publicId,
+          courseTitle: publicCourse.courseTitle,
+          description: publicCourse.description,
+          instructorName: publicCourse.instructorName,
+          creditHr: publicCourse.creditHr,
+          thumbnail: publicCourse.thumbnail,
         },
       },
       200
     );
   } catch (error) {
-    console.error("Update course error:", error);
-    return c.json({ error: "Internal server error" }, 500);
+    console.error("Add public course error: ", error);
+    return c.json({ error: "Internal Server Error" }, 500);
   }
 };
