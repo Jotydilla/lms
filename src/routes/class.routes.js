@@ -4,7 +4,6 @@ import { authMiddleware } from "../middleware/authMiddleware.js";
 import { roleMiddleware } from "../middleware/roleMiddleware.js";
 import { rateLimit } from "../middleware/rateLimit.js";
 
-//  role constants
 const ROLES = {
   ADMIN: "admin",
   MANAGER: "manager",
@@ -13,13 +12,6 @@ const ROLES = {
 
 const classRoute = new Hono();
 
-/**
- * ======================
- * ADMIN / MANAGER ROUTES
- * ======================
- */
-
-// Get all classes
 classRoute.get(
   "/",
   authMiddleware,
@@ -27,7 +19,6 @@ classRoute.get(
   ClassController.getClasses
 );
 
-// Get class by publicId
 classRoute.get(
   "/:publicId",
   authMiddleware,
@@ -35,7 +26,6 @@ classRoute.get(
   ClassController.getClass
 );
 
-// Get total class count
 classRoute.get(
   "/count",
   authMiddleware,
@@ -43,7 +33,6 @@ classRoute.get(
   ClassController.classCount
 );
 
-// Update last payment date
 classRoute.put(
   "/lastpayment/:publicId",
   authMiddleware,
@@ -51,7 +40,6 @@ classRoute.put(
   ClassController.updateLastPaymentDate
 );
 
-// Update learning status
 classRoute.put(
   "/learningstatus/:publicId",
   authMiddleware,
@@ -59,7 +47,6 @@ classRoute.put(
   ClassController.learningStatusClass
 );
 
-// approve criteria
 classRoute.put(
   "/approve/:publicId",
   authMiddleware,
@@ -67,13 +54,6 @@ classRoute.put(
   ClassController.approveClass
 );
 
-/**
- * ======================
- * STUDENT ROUTES
- * ======================
- */
-
-// Get my classes
 classRoute.get(
   "/my-classes/",
   authMiddleware,
@@ -81,7 +61,6 @@ classRoute.get(
   ClassController.myClass
 );
 
-// Register a new class
 classRoute.post(
   "/register",
   authMiddleware,
@@ -90,7 +69,6 @@ classRoute.post(
   ClassController.addClass
 );
 
-// Update class info
 classRoute.put(
   "/update/:publicId",
   authMiddleware,
@@ -98,13 +76,6 @@ classRoute.put(
   ClassController.updateClass
 );
 
-/**
- * ======================
- * MANAGER-ONLY ROUTES
- * ======================
- */
-
-// Delete class
 classRoute.delete(
   "/delete/:publicId",
   authMiddleware,

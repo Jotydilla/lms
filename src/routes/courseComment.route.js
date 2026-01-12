@@ -5,7 +5,6 @@ import { roleMiddleware } from "../middleware/roleMiddleware.js";
 import { rateLimit } from "../middleware/rateLimit.js";
 import { validate } from "../middleware/validateMiddleware.js";
 
-// Role constants
 const ROLES = {
   ADMIN: "admin",
   MANAGER: "manager",
@@ -14,13 +13,6 @@ const ROLES = {
 
 const commentRoute = new Hono();
 
-/**
- * ======================
- * ADMIN / MANAGER ROUTES
- * ======================
- */
-
-// Get all comments
 commentRoute.get(
   "/:courseId",
   authMiddleware,
@@ -28,7 +20,6 @@ commentRoute.get(
   CourseCommentController.getComments
 );
 
-// Get comment by publicId
 commentRoute.get(
   "/:publicId",
   authMiddleware,
@@ -36,13 +27,6 @@ commentRoute.get(
   CourseCommentController.getComment
 );
 
-/**
- * ======================
- * STUDENT ROUTES
- * ======================
- */
-
-// Add a new comment
 commentRoute.post(
   "/add",
   authMiddleware,
@@ -55,7 +39,6 @@ commentRoute.post(
   CourseCommentController.addComment
 );
 
-// Update a comment
 commentRoute.put(
   "/update/:publicId",
   authMiddleware,
@@ -64,13 +47,6 @@ commentRoute.put(
   CourseCommentController.updateComment
 );
 
-/**
- * ======================
- * MANAGER / STUDENT ROUTES
- * ======================
- */
-
-// Delete a comment
 commentRoute.delete(
   "/delete/:publicId",
   authMiddleware,

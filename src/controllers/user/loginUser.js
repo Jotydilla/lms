@@ -5,7 +5,6 @@ import { Op } from "sequelize";
 import User from "../../models/User.js";
 import userSession from "../../models/userSession.js";
 import crypto from "crypto";
-// updated!!
 
 dotenv.config();
 const secret = process.env.SECRET;

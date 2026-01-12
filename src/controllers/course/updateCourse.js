@@ -26,7 +26,6 @@ export const updateCourse = async (c) => {
     const course = await Course.findOne({ where: { publicId } });
     if (!course) return c.json({ error: "Course not found!" }, 404);
 
-    // Check for duplicate title
     const existingTitle = await Course.findOne({
       where: {
         courseTitle,
@@ -40,7 +39,7 @@ export const updateCourse = async (c) => {
       );
     }
 
-    let fileName = course.thumbnail; // keep existing if no new file
+    let fileName = course.thumbnail;
     if (thumbnail && thumbnail.name) {
       const allowedMime = [
         "application/pdf",
@@ -62,13 +61,16 @@ export const updateCourse = async (c) => {
       }
 
       fileName = `${crypto.randomUUID()}.${ext}`;
-      const uploadDir = path.join(process.cwd(), "courses", "course_thumbnail");
+      const uploadDir = path.join(
+        process.cwd(),
+        "src/courses",
+        "course_thumbnail"
+      );
       await fs.mkdir(uploadDir, { recursive: true });
 
       const buffer = Buffer.from(await thumbnail.arrayBuffer());
       await fs.writeFile(path.join(uploadDir, fileName), buffer);
 
-      // delete old thumbnail
       if (course.thumbnail) {
         const oldPath = path.join(uploadDir, course.thumbnail);
         fs.unlink(oldPath).catch(() =>

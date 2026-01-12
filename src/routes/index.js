@@ -16,10 +16,10 @@ import examQuestionRoute from "./examquestion.route.js";
 import studentExamAnswerRoute from "./studentexamanswer.js";
 import commentRoute from "./courseComment.route.js";
 import courseVideoRoute from "./courseVideo.route.js";
+import instructorRoute from "./instructors.route.js";
 
 const routes = new Hono();
 
-// Mounting all routes
 routes.route("/classes", classRoute);
 routes.route("/levels", levelRoute);
 routes.route("/payments", paymentRoute);
@@ -35,8 +35,8 @@ routes.route("/exams", examRoute);
 routes.route("/exam-questions", examQuestionRoute);
 routes.route("/exam-answers", studentExamAnswerRoute);
 routes.route("/comments", commentRoute);
+routes.route("/instructors", instructorRoute);
 
-// Dashboard / a
 routes.route("/dashboard", authRouter);
 
 export default routes;

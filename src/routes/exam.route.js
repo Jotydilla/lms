@@ -3,7 +3,6 @@ import * as ExamController from "../controllers/exam/index.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { roleMiddleware } from "../middleware/roleMiddleware.js";
 
-// Role constants
 const ROLES = {
   ADMIN: "admin",
   MANAGER: "manager",
@@ -11,13 +10,6 @@ const ROLES = {
 
 const examRoute = new Hono();
 
-/**
- * ======================
- * ADMIN / MANAGER ROUTES
- * ======================
- */
-
-// Get all exams
 examRoute.get(
   "/",
   authMiddleware,
@@ -25,7 +17,6 @@ examRoute.get(
   ExamController.getExams
 );
 
-// Get exam by id
 examRoute.get(
   "/:id",
   authMiddleware,
@@ -33,7 +24,6 @@ examRoute.get(
   ExamController.getExam
 );
 
-// Add a new exam
 examRoute.post(
   "/add",
   authMiddleware,
@@ -41,7 +31,6 @@ examRoute.post(
   ExamController.addExam
 );
 
-// Update exam
 examRoute.put(
   "/update/:id",
   authMiddleware,
@@ -49,13 +38,6 @@ examRoute.put(
   ExamController.updateExam
 );
 
-/**
- * ======================
- * MANAGER-ONLY ROUTES
- * ======================
- */
-
-// Delete exam
 examRoute.delete(
   "/delete/:id",
   authMiddleware,
