@@ -29,9 +29,9 @@ export const getLevels = async (c) => {
       };
     });
 
-    return c.json({ levels: flatten });
+    return c.json({ levels: flatten }, 200);
   } catch (error) {
     console.error("Get levels error:", error);
-    return c.json({ error: "Internal server error" });
+    return c.json({ error: "Internal server error" }, 500);
   }
 };

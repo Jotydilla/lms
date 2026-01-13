@@ -38,7 +38,7 @@ publicCourseRoute.put(
   PuclicCourseController.updatePublicCourse
 );
 
-publicCourseRoute.put(
+publicCourseRoute.delete(
   "/delete/:publicId",
   //   authMiddleware,
   //   roleMiddleware([ROLES.ADMIN, ROLES.MANAGER]),

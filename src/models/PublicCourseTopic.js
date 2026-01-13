@@ -32,4 +32,11 @@ const PublicCourseTopic = sequelize.define(
   }
 );
 
+PublicCourse.hasOne(PublicCourseTopic, {
+  foreignKey: "id",
+});
+PublicCourseTopic.belongsTo(PublicCourse, {
+  foreignKey: "course_id",
+});
+
 export default PublicCourseTopic;

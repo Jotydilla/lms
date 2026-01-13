@@ -36,7 +36,7 @@ export const addLevel = async (c) => {
         message: "Level added successfully!",
         level: newLevel,
       },
-      201
+      200
     );
   } catch (error) {
     console.error("Add level error:", error);

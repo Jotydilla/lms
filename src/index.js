@@ -14,7 +14,7 @@ const app = new Hono();
 
 app.use("*", cors());
 app.use("*", securityHeaders);
-app.use("*", rateLimit({ windowMs: 60000, limit: 50 }));
+// app.use("*", rateLimit({ windowMs: 60000, limit: 50 }));
 
 app.route("/", routes);
 
@@ -24,7 +24,7 @@ app.get("/:folder/*", async (c) => {
   const filePath = path.join(process.cwd(), "src", folder, relativePath);
 
   if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
-    return c.json({ message: "File not found" }, 404);
+    return c.json({ message: "page not found" }, 404);
   }
 
   const ext = path.extname(filePath).toLowerCase();

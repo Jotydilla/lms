@@ -2,6 +2,7 @@ import PublicCourse from "../../models/PublicCourse.js";
 import path from "path";
 import crypto from "crypto";
 import { promises as fs } from "fs";
+import { Op } from "sequelize";
 
 export const updatePublicCourse = async (c) => {
   try {
@@ -22,12 +23,15 @@ export const updatePublicCourse = async (c) => {
     if (!publicCourse) return c.json({ error: "Course not found!" }, 404);
 
     const existingPublicCourse = await PublicCourse.findOne({
-      where: { courseTitle },
+      where: {
+        courseTitle,
+        publicId: { [Op.ne]: publicId },
+      },
     });
     if (existingPublicCourse)
-      return c.json({ message: "course already exist" }, 409);
+      return c.json({ message: "course Title already exist" }, 409);
 
-    let fileName = course.thumbnail;
+    let fileName = publicCourse.thumbnail;
     if (thumbnail && thumbnail.name) {
       const allowedMime = [
         // "application/pdf",
