@@ -32,7 +32,7 @@ const Level = connection.define(
     weekNumber: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      defaultValue: 7, // weekly(7), daily(1), monthly(30)
+      defaultValue: 7,
       field: "week_number",
     },
   },
@@ -44,8 +44,6 @@ const Level = connection.define(
 
 Subject.hasOne(Level, {
   foreignKey: "subject_id",
-  onUpdate: "CASCADE",
-  onDelete: "RESTRICT",
 });
 Level.belongsTo(Subject, { foreignKey: "subject_id" });
 

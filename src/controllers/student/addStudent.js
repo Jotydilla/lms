@@ -67,7 +67,7 @@ export const addStudent = async (c) => {
     const user = c.get("user");
     if (!user) return c.json({ error: "Unauthorized" }, 401);
     if (user.userType !== "student")
-      return c.json({ error: "You are not a student" }, 403);
+      return c.json({ error: "You have not a permission to register" }, 403);
 
     const errors = validateStudentData(body);
     if (errors.length > 0)
@@ -76,7 +76,7 @@ export const addStudent = async (c) => {
     const actived = await User.findOne({
       where: { user_id: user.userId, status: "active" },
     });
-    if (!actived) return c.json({ error: "User must be active" }, 403);
+    if (!actived) return c.json({ error: "Your phone must be active" }, 403);
 
     const existingStudent = await Student.findOne({
       where: { userId: user.userId },

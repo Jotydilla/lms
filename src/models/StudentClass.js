@@ -87,19 +87,13 @@ const StudentClass = connection.define(
   }
 );
 
-// student relation
 Student.hasMany(StudentClass, {
   foreignKey: "student_id",
-  onUpdate: "CASCADE",
-  onDelete: "RESTRICT",
 });
 StudentClass.belongsTo(Student, { foreignKey: "student_id" });
 
-// level relation
 Level.hasMany(StudentClass, {
   foreignKey: "level_id",
-  onUpdate: "CASCADE",
-  onDelete: "RESTRICT",
 });
 StudentClass.belongsTo(Level, { foreignKey: "level_id" });
 

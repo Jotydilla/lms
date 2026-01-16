@@ -23,12 +23,7 @@ export const addPublicCourse = async (c) => {
     if (existingPublicCourse)
       return c.json({ message: "course already exist" }, 409);
 
-    const allowedMime = [
-      //   "application/pdf",
-      "image/jpeg",
-      "image/png",
-      "image/jpg",
-    ];
+    const allowedMime = ["image/jpeg", "image/png", "image/jpg"];
     if (!allowedMime.includes(thumbnail.type)) {
       return c.json({ error: "Only JPG, JPEG, PNG files are allowed" }, 400);
     }

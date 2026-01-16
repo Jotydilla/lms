@@ -14,7 +14,8 @@ export const addClass = async (c) => {
     if (!user) return c.json({ error: "Unauthorized" }, 401);
     const userId = user.userId;
 
-    if (user.userType !== "student") return c.json("you are not student!!");
+    if (user.userType !== "student")
+      return c.json("you have not a permission to register!!");
 
     const student = await Student.findOne({ where: { userId } });
     if (!student) return c.json({ error: "You are not registered!" }, 404);
@@ -32,7 +33,6 @@ export const addClass = async (c) => {
       return c.json({ warning: "Level not found" }, 404);
     }
 
-    // Check if already registered for this level
     const existingClass = await StudentClass.findOne({
       where: { studentId, levelId },
     });
@@ -40,7 +40,6 @@ export const addClass = async (c) => {
       return c.json({ warning: "Already registered in this class" }, 409);
     }
 
-    // Check if student has any unfinished class
     const unfinishedClass = await StudentClass.findOne({
       where: {
         studentId,
@@ -55,8 +54,6 @@ export const addClass = async (c) => {
         400
       );
     }
-
-    // File validation
     const allowedMime = [
       "application/pdf",
       "image/jpeg",
@@ -76,9 +73,8 @@ export const addClass = async (c) => {
       return c.json({ error: "Invalid file extension" }, 400);
     }
 
-    // Save file
     const fileName = `${crypto.randomUUID()}.${ext}`;
-    const uploadDir = path.join(process.cwd(), "files", "criteria");
+    const uploadDir = path.join(process.cwd(), "src/files", "criteria");
     await fs.mkdir(uploadDir, { recursive: true });
     const buffer = Buffer.from(await criteriaFile.arrayBuffer());
     await fs.writeFile(path.join(uploadDir, fileName), buffer);

@@ -12,7 +12,19 @@ import { securityHeaders } from "./middleware/securityHeaders.js";
 dotenv.config();
 const app = new Hono();
 
-app.use("*", cors());
+const allowedOrigin = [
+  "http://localhost:5173",
+  "http://192.168.1.1:4000",
+  "http://192.168.1.2:5173",
+];
+
+app.use(
+  "*",
+  cors({
+    // origin: (origin) => (allowedOrigin.includes(origin) ? origin : ""),
+    // credentials: true,
+  })
+);
 app.use("*", securityHeaders);
 // app.use("*", rateLimit({ windowMs: 60000, limit: 50 }));
 

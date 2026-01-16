@@ -1,5 +1,5 @@
 import User from "../../models/User.js";
-import { and, Op } from "sequelize";
+import { Op } from "sequelize";
 export const getAdmins = async (c) => {
   try {
     const user_data = await User.findAll({

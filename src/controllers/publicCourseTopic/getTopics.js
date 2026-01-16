@@ -7,7 +7,7 @@ export const getPublicCourseTopics = async (c) => {
       include: [{ model: PublicCourse }],
     });
     if (!topics || topics.length === 0)
-      return c.json({ message: "Topics not found!!" }, 404);
+      return c.json({ message: "Topics naot found!!" }, 404);
 
     const flatten = topics.map((item) => {
       const row = item.toJSON();

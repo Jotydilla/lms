@@ -31,18 +31,18 @@ publicCourseTopicRoute.post(
   PuclicCourseTopicController.addTopic
 );
 
-// publicCourseTopicRoute.put(
-//   "/update/:publicId",
-//   //   authMiddleware,
-//   //   roleMiddleware([ROLES.ADMIN, ROLES.MANAGER]),
-//   PuclicCourseTopicController.updatePublicCourse
-// );
+publicCourseTopicRoute.put(
+  "/update/:publicId",
+  //   authMiddleware,
+  //   roleMiddleware([ROLES.ADMIN, ROLES.MANAGER]),
+  PuclicCourseTopicController.updateTopic
+);
 
-// publicCourseTopicRoute.delete(
-//   "/delete/:publicId",
-//   //   authMiddleware,
-//   //   roleMiddleware([ROLES.ADMIN, ROLES.MANAGER]),
-//   PuclicCourseTopicController.deletePublicCourse
-// );
+publicCourseTopicRoute.delete(
+  "/delete/:publicId",
+  //   authMiddleware,
+  //   roleMiddleware([ROLES.ADMIN, ROLES.MANAGER]),
+  PuclicCourseTopicController.deleteTopic
+);
 
 export default publicCourseTopicRoute;

@@ -49,30 +49,19 @@ const StudentExamAnswers = sequelize.define(
   }
 );
 
-// exam relation
 Exam.hasMany(StudentExamAnswers, {
   foreignKey: "exam_id",
-  onUpdate: "CASCADE",
-  onDelete: "RESTRICT",
 });
 StudentExamAnswers.belongsTo(Exam, { foreignKey: "exam_id" });
 
-// class relation
 StudentClass.hasMany(StudentExamAnswers, {
   foreignKey: "class_id",
-  onUpdate: "CASCADE",
-  onDelete: "RESTRICT",
 });
 StudentExamAnswers.belongsTo(StudentClass, { foreignKey: "class_id" });
 
-// examquestion relation
 ExamQuestion.hasMany(StudentExamAnswers, {
   foreignKey: "exam_id",
-  onUpdate: "CASCADE",
-  onDelete: "RESTRICT",
 });
 StudentExamAnswers.belongsTo(ExamQuestion, { foreignKey: "question_id" });
 
 export default StudentExamAnswers;
-
-// studentAnswer, marksObtained

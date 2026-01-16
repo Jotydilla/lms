@@ -52,13 +52,12 @@ export const updateClass = async (c) => {
       }
 
       const fileName = `${crypto.randomUUID()}.${ext}`;
-      const uploadDir = path.join(process.cwd(), "files", "criteria");
+      const uploadDir = path.join(process.cwd(), "scr/files", "criteria");
       await fs.mkdir(uploadDir, { recursive: true });
 
       const buffer = Buffer.from(await criteriaFile.arrayBuffer());
       await fs.writeFile(path.join(uploadDir, fileName), buffer);
 
-      // Optionally remove old file
       if (myClass.criteriaFile) {
         try {
           await fs.unlink(path.join(uploadDir, myClass.criteriaFile));

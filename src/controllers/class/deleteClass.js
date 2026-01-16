@@ -10,9 +10,8 @@ export const deleteClass = async (c) => {
       return c.json({ message: "Class not found" }, 404);
     }
 
-    // Check if any payments are linked to this class
     const checkRelation = await StudentPayment.findOne({
-      where: { classId: classToDelete.classId }, // use correct field
+      where: { classId: classToDelete.classId },
     });
 
     if (checkRelation) {
