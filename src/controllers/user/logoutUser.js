@@ -8,17 +8,13 @@ export const logoutUser = async (c) => {
     if (refreshToken) {
       await userSession.update(
         { isRevoked: true },
-        {
-          where: {
-            userId: user.id,
-            refreshToken,
-          },
-        }
+        { where: { userId: user.publicId, refreshToken } },
       );
     }
+
     c.header("Set-Cookie", [
-      "accessToken=; HttpOnly; Path=/; Max-Age=0; SameSite=Strict",
-      "refreshToken=; HttpOnly; Path=/; Max-Age=0; SameSite=Strict",
+      "accessToken=; HttpOnly; Path=/; Max-Age=0; SameSite=None",
+      "refreshToken=; HttpOnly; Path=/; Max-Age=0; SameSite=None",
     ]);
 
     return c.json({ message: "Logged out successfully" });

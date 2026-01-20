@@ -21,7 +21,7 @@ userRoute.post(
     password: { required: true, min: 2, max: 15 },
   }),
   rateLimit({ windowMs: 60 * 60 * 1000, limit: 5 }),
-  UserController.addUser
+  UserController.addUser,
 );
 
 userRoute.post(
@@ -31,71 +31,71 @@ userRoute.post(
     password: { required: true, min: 3, max: 30 },
   }),
   rateLimit({ windowMs: 60 * 60 * 1000, limit: 10 }),
-  UserController.loginUser
+  UserController.loginUser,
 );
 
 userRoute.post(
   "/forgot",
   validate({ phone: { required: true, pattern: /^[0-9]{9,15}$/ } }),
   rateLimit({ windowMs: 60 * 60 * 1000, limit: 3 }),
-  UserController.forgotPassword
+  UserController.forgotPassword,
 );
 
 userRoute.post(
   "/verify-phone",
   validate({ phone: { required: true, pattern: /^[0-9]{9,15}$/ } }),
   rateLimit({ windowMs: 60 * 60 * 1000, limit: 5 }),
-  UserController.verifyPhone
+  UserController.verifyPhone,
 );
 
 userRoute.put(
   "/reset-password/:verifyId",
   rateLimit({ windowMs: 60 * 60 * 1000, limit: 10 }),
-  UserController.resetPassword
+  UserController.resetPassword,
 );
 
 userRoute.post(
   "/resend-otp-password",
   validate({ phone: { required: true, pattern: /^[0-9]{9,15}$/ } }),
   rateLimit({ windowMs: 60 * 60 * 1000, limit: 10 }),
-  UserController.resendOTPPassword
+  UserController.resendOTPPassword,
 );
 
 userRoute.post(
   "/resend-otp-activation",
   validate({ phone: { required: true, pattern: /^[0-9]{9,15}$/ } }),
   rateLimit({ windowMs: 60 * 60 * 1000, limit: 10 }),
-  UserController.resendOTPActivation
+  UserController.resendOTPActivation,
 );
 
 userRoute.post(
   "/verify/:verifyId",
   rateLimit({ windowMs: 60 * 60 * 1000, limit: 20 }),
-  UserController.verifyUser
+  UserController.verifyUser,
 );
 
 userRoute.get(
   "/verification-otp/:verifyId",
-  UserController.getVerificationSession
+  UserController.getVerificationSession,
 );
 
 userRoute.get(
   "/get-reset-password-otp/:verifyId",
-  UserController.getResetPassword
+  UserController.getResetPassword,
 );
 
 userRoute.get(
   "/",
   authMiddleware,
   roleMiddleware([ROLES.ADMIN, ROLES.MANAGER]),
-  UserController.getUsers
+  UserController.getUsers,
 );
 
 userRoute.get(
   "/:publicId",
   // authMiddleware,
   // roleMiddleware([ROLES.ADMIN, ROLES.MANAGER, ROLES.STUDENT]),
-  UserController.getUser
+  UserController.getUser,
 );
 
 userRoute.post("/otp-verify/:verifyId", UserController.verifyOTP);
@@ -104,20 +104,20 @@ userRoute.get(
   "/me",
   authMiddleware,
   roleMiddleware([ROLES.ADMIN, ROLES.MANAGER, ROLES.STUDENT]),
-  UserController.authorized
+  UserController.authorized,
 );
 
 userRoute.post(
-  "/refresh",
+  "/refresh-token",
   authMiddleware,
   roleMiddleware([ROLES.ADMIN, ROLES.MANAGER, ROLES.STUDENT]),
-  UserController.refreshToken
+  UserController.refreshToken,
 );
 userRoute.post(
   "/logout",
   authMiddleware,
   roleMiddleware([ROLES.ADMIN, ROLES.MANAGER, ROLES.STUDENT]),
-  UserController.logoutUser
+  UserController.logoutUser,
 );
 
 userRoute.put(
@@ -130,35 +130,35 @@ userRoute.put(
     comfirmPassword: { required: true, min: 3, max: 15 },
   }),
   rateLimit({ windowMs: 60 * 1000, limit: 5 }),
-  UserController.changePassword
+  UserController.changePassword,
 );
 
 userRoute.put(
   "/change-password/:publicId",
   authMiddleware,
   roleMiddleware([ROLES.MANAGER]),
-  UserController.updateUser
+  UserController.updateUser,
 );
 
 userRoute.put(
   "/activation/:id",
   authMiddleware,
   roleMiddleware([ROLES.ADMIN, ROLES.MANAGER]),
-  UserController.userActivation
+  UserController.userActivation,
 );
 
 userRoute.put(
   "/status/:publicId",
   authMiddleware,
   roleMiddleware([ROLES.MANAGER]),
-  UserController.userStatus
+  UserController.userStatus,
 );
 
 userRoute.delete(
   "/delete/:publicId",
   authMiddleware,
   roleMiddleware([ROLES.MANAGER]),
-  UserController.deleteUser
+  UserController.deleteUser,
 );
 
 userRoute.post(
@@ -169,26 +169,26 @@ userRoute.post(
     phone: { required: true, pattern: /^[0-9]{9,15}$/ },
     password: { required: true, min: 4, max: 15 },
   }),
-  UserController.addAdmin
+  UserController.addAdmin,
 );
 
 userRoute.get(
   "/admins/",
   authMiddleware,
   roleMiddleware([ROLES.MANAGER]),
-  UserController.getAdmins
+  UserController.getAdmins,
 );
 
 userRoute.get(
   "/admin/:publicId",
   authMiddleware,
   roleMiddleware([ROLES.MANAGER]),
-  UserController.getAdmin
+  UserController.getAdmin,
 );
 
-userRoute.get("/dashboard/", authMiddleware, verifyPhone, (c) => {
+userRoute.get("/me/", authMiddleware, verifyPhone, (c) => {
   const user = c.get("user");
-  return c.json({ message: `Welcome to your dashboard, ${user.publicId}!` });
+  return c.json({ message: `Welcome, ${user.publicId}` });
 });
 
 export default userRoute;

@@ -14,9 +14,7 @@ export const refreshToken = async (c) => {
 
     let payload;
     try {
-      payload = jwt.verify(token, refreshSecret, {
-        algorithms: ["HS256"],
-      });
+      payload = jwt.verify(token, refreshSecret, { algorithms: ["HS256"] });
     } catch {
       return c.json({ error: "Invalid or expired refresh token" }, 401);
     }
@@ -30,14 +28,12 @@ export const refreshToken = async (c) => {
         expiresAt: { [Op.gt]: now },
       },
     });
-
     if (!session) return c.json({ error: "Session expired or revoked" }, 401);
 
     const newAccessToken = jwt.sign({ id: session.userId }, secret, {
-      expiresIn: "1hr",
+      expiresIn: "1h",
       algorithm: "HS256",
     });
-
     const newRefreshToken = jwt.sign({ id: session.userId }, refreshSecret, {
       expiresIn: "30d",
       algorithm: "HS256",
@@ -49,12 +45,8 @@ export const refreshToken = async (c) => {
     await session.save();
 
     c.header("Set-Cookie", [
-      `accessToken=${newAccessToken}; HttpOnly; Path=/; Max-Age=${
-        1 * 60 * 60
-      }; SameSite=Strict`,
-      `refreshToken=${newRefreshToken}; HttpOnly; Path=/; Max-Age=${
-        30 * 24 * 60 * 60
-      }; SameSite=Strict`,
+      `accessToken=${newAccessToken}; HttpOnly; Path=/; Max-Age=${3600}; SameSite=None`,
+      `refreshToken=${newRefreshToken}; HttpOnly; Path=/; Max-Age=${30 * 24 * 60 * 60}; SameSite=None`,
     ]);
 
     return c.json({ message: "Token refreshed" });
