@@ -44,7 +44,7 @@ userRoute.post(
 userRoute.post(
   "/verify-phone",
   validate({ phone: { required: true, pattern: /^[0-9]{9,15}$/ } }),
-  rateLimit({ windowMs: 60 * 60 * 1000, limit: 5 }),
+  rateLimit({ windowMs: 60 * 60 * 1000, limit: 8 }),
   UserController.verifyPhone,
 );
 
@@ -100,17 +100,12 @@ userRoute.get(
 
 userRoute.post("/otp-verify/:verifyId", UserController.verifyOTP);
 
-userRoute.get(
-  "/me",
-  authMiddleware,
-  roleMiddleware([ROLES.ADMIN, ROLES.MANAGER, ROLES.STUDENT]),
-  UserController.authorized,
-);
+userRoute.get("/me/", authMiddleware, UserController.authorized);
 
 userRoute.post(
   "/refresh-token",
-  authMiddleware,
-  roleMiddleware([ROLES.ADMIN, ROLES.MANAGER, ROLES.STUDENT]),
+  // authMiddleware,
+  // roleMiddleware([ROLES.ADMIN, ROLES.MANAGER, ROLES.STUDENT]),
   UserController.refreshToken,
 );
 userRoute.post(
@@ -186,9 +181,9 @@ userRoute.get(
   UserController.getAdmin,
 );
 
-userRoute.get("/me/", authMiddleware, verifyPhone, (c) => {
-  const user = c.get("user");
-  return c.json({ message: `Welcome, ${user.publicId}` });
-});
+// userRoute.get("/me/", authMiddleware, verifyPhone, (c) => {
+//   const user = c.get("user");
+//   return c.json({ message: `Welcome, ${user.publicId}` });
+// });
 
 export default userRoute;

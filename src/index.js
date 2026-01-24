@@ -22,10 +22,7 @@ const allowedOrigin = [
 app.use(
   "*",
   cors({
-    origin: (origin) => {
-      if (!origin) return "";
-      return origin === "http://192.168.1.2:5173" ? origin : "";
-    },
+    origin: "http://localhost:5173",
     credentials: true,
   }),
 );

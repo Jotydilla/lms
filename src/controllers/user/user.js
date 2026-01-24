@@ -1,26 +1,12 @@
-import User from "../../models/User.js";
 export const authorized = async (c) => {
   try {
     const user = c.get("user");
-    if (!user) return c.json({ error: "Unauthorized" }, 401);
-    const userId = user.userId;
-
-    const user_data = await User.findByPk(userId, {
-      attributes: [
-        "public_id",
-        "phone",
-        "user_type",
-        "status",
-        "last_login",
-        "createdAt",
-        "updatedAt",
-      ],
-    });
-    if (!user_data) {
-      return c.json({ message: "User not found!!" }, 404);
+    if (!user) {
+      return c.json({ error: "Unauthorized" }, 401);
     }
-    const row = user_data.toJSON();
+
     const format = (d) => {
+      if (!d) return null;
       const date = new Date(d);
       return (
         date.getDate().toString().padStart(2, "0") +
@@ -29,26 +15,28 @@ export const authorized = async (c) => {
         "-" +
         date.getFullYear() +
         " at " +
-        date.getHours() +
+        date.getHours().toString().padStart(2, "0") +
         ":" +
-        date.getMinutes() +
+        date.getMinutes().toString().padStart(2, "0") +
         ":" +
-        date.getSeconds()
+        date.getSeconds().toString().padStart(2, "0")
       );
     };
+
     const flat = {
-      id: row.publicId,
-      phone: row.phone,
-      status: row.status,
-      userType: row.user_type,
-      lastLogin: format(row.last_login),
-      registerDate: format(row.createdAt),
-      updateDate: format(row.updatedAt),
+      id: user.publicId,
+      phone: user.phone,
+      status: user.status,
+      userType: user.userType,
+      is_verified: user.is_verified,
+      lastLogin: format(user.lastLogin),
+      registerDate: format(user.createdAt),
+      updateDate: format(user.updatedAt),
     };
 
     return c.json({ user: flat });
   } catch (error) {
-    console.error(error);
-    return c.text("Internal server error", 500);
+    console.error("AUTHORIZED ERROR:", error);
+    return c.json({ error: "Internal server error" }, 500);
   }
 };

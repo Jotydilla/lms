@@ -27,6 +27,8 @@ export const verifyPhone = async (c) => {
   const check_verification = await VerificationSession.findOne({
     where: {
       userId: user.userId,
+      is_verified: false,
+      purpose: "phone_verify",
       expiresAt: {
         [Op.gt]: new Date(),
       },
@@ -37,7 +39,7 @@ export const verifyPhone = async (c) => {
   if (check_verification)
     return c.json(
       { message: "Please wait, a verification code has already been sent." },
-      403
+      403,
     );
 
   const startOfDay = new Date();
@@ -60,7 +62,7 @@ export const verifyPhone = async (c) => {
       {
         message: "You have finished daily activity, try another day",
       },
-      403
+      403,
     );
   }
 
@@ -73,6 +75,6 @@ export const verifyPhone = async (c) => {
 
   return c.json(
     { data: { message: " New OTP sent.", id: verification.verifyId } },
-    200
+    200,
   );
 };
